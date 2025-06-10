@@ -1,0 +1,149 @@
+package com.nutricao.santaclara
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.nutricao.santaclara.ui.theme.NutricaoSantaClaraTheme
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            NutricaoSantaClaraTheme {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+                    AppMainScreen()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AppMainScreen() {
+    var currentScreen by remember { mutableStateOf("cadastro") }
+
+    when (currentScreen) {
+        "cadastro" -> CadastroScreen(onNavigate = { currentScreen = it })
+        "educacao" -> EducacaoScreen(onNavigate = { currentScreen = it })
+        "historico" -> HistoricoScreen(onNavigate = { currentScreen = it })
+    }
+}
+
+@Composable
+fun TopNavigationBar(onNavigate: (String) -> Unit) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Button(onClick = { onNavigate("cadastro") }) { Text("Cadastro") }
+        Button(onClick = { onNavigate("educacao") }) { Text("Educação") }
+        Button(onClick = { onNavigate("historico") }) { Text("Histórico") }
+    }
+}
+
+@Composable
+fun CadastroScreen(onNavigate: (String) -> Unit) {
+    var nome by remember { mutableStateOf("") }
+    var objetivo by remember { mutableStateOf("") }
+    var dieta by remember { mutableStateOf("") }
+
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
+
+        TopNavigationBar(onNavigate)
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Cadastro Nutricional", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = nome,
+            onValueChange = { nome = it },
+            label = { Text("Nome completo") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = objetivo,
+            onValueChange = { objetivo = it },
+            label = { Text("Objetivo de saúde") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = dieta,
+            onValueChange = { dieta = it },
+            label = { Text("Plano alimentar sugerido") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = {
+            // Simulação de salvamento
+        }, modifier = Modifier.fillMaxWidth()) {
+            Text("Salvar Informações")
+        }
+    }
+}
+
+@Composable
+fun EducacaoScreen(onNavigate: (String) -> Unit) {
+    val dicas = listOf(
+        "Beba pelo menos 2 litros de água por dia",
+        "Evite alimentos ultraprocessados",
+        "Inclua frutas e vegetais nas refeições",
+        "Evite pular refeições",
+        "Prefira alimentos locais e sazonais"
+    )
+
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
+
+        TopNavigationBar(onNavigate)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("Educação Nutricional", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn {
+            items(dicas.size) { index ->
+                Card(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp), elevation = 4.dp) {
+                    Text(dicas[index], modifier = Modifier.padding(16.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun HistoricoScreen(onNavigate: (String) -> Unit) {
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
+
+        TopNavigationBar(onNavigate)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("Histórico Alimentar (simulado)", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("- 03/06: Reduziu refrigerantes, aumentou consumo de frutas")
+        Text("- 04/06: Iniciou plano com 3 refeições principais e 2 lanches")
+        Text("- 05/06: Incluiu atividade física leve")
+    }
+}
